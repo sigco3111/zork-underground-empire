@@ -4,11 +4,11 @@ import './item-selection.css';
 
 export const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 export const touchHint = (value: string) => value
-  .replace(/\bPress L\b/g, 'Tap Lamp').replace(/\bpress L\b/g, 'tap Lamp')
-  .replace(/\bPress E\b/g, 'Tap Interact').replace(/\bpress E\b/g, 'tap Interact')
-  .replace(/\bwith E\b/g, 'using Interact').replace(/\bthen E\b/g, 'then tap Interact')
-  .replace(/\bDodge with Q\b/g, 'Tap Dodge').replace(/\bparry with R\b/g, 'hold Guard to parry')
-  .replace(/\bStrike with F\b/g, 'Tap Strike');
+  .replace(/\bPress L\b/g, '랜턴 켜기').replace(/\bpress L\b/g, '랜턴 켜기')
+  .replace(/\bPress E\b/g, '상호작용 탭').replace(/\bpress E\b/g, '상호작용 탭')
+  .replace(/\bwith E\b/g, '상호작용 사용').replace(/\bthen E\b/g, '그 다음 상호작용 탭')
+  .replace(/\bDodge with Q\b/g, '회피 탭').replace(/\bparry with R\b/g, '가드를 눌러 막기')
+  .replace(/\bStrike with F\b/g, '공격 탭');
 const icon = `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 25 15 38 20 25 25 20 38 15 25 2 20 15 15Z" fill="none" stroke="currentColor"/><path d="m20 9 4 11-4 11-4-11Z" fill="currentColor"/></svg>`;
 
 export class GameUI {
@@ -241,14 +241,14 @@ export class GameUI {
     });
   }
   credits() {
-    this.open('credits', `<div class="credits-body"><h3>A return to the Great Underground Empire</h3><p>A condensed 3D adaptation of Zork I’s treasure-and-barrow arc, with original environments, first-person combat, nineteen recoverable treasures, and the ancient map.</p><p>Based on Zork by Marc Blank, Dave Lebling, Bruce Daniels, and Tim Anderson, and the MIT-licensed Zork I source released by Microsoft in 2025. This is an independent adaptation.</p><p>World geometry, creatures, interface, and sound were created for this game. Photogrammetric surface materials are CC0 assets from Poly Haven.</p><a href="https://github.com/emollick/zork-underground-empire" target="_blank" rel="noreferrer">This adaptation on GitHub ↗</a><a href="./licenses/ADAPTATION-MIT.txt" target="_blank" rel="noreferrer">Adaptation source license ↗</a><a href="https://github.com/historicalsource/zork1" target="_blank" rel="noreferrer">Original Zork I source ↗</a><a href="./licenses/ZORK-MIT.txt" target="_blank" rel="noreferrer">Zork source license ↗</a><a href="https://polyhaven.com/license" target="_blank" rel="noreferrer">Poly Haven asset license ↗</a></div>`, 'About this adventure');
+    this.open('credits', `<div class="credits-body"><h3>위대한 지하 제국으로의 귀환</h3><p>Zork I의 보물과 무덤의 이야기를 3D로 압축 재구성한 어댑테이션. 새로운 환경, 1인칭 전투, 19개의 되찾을 수 있는 보물, 그리고 고대의 지도가 담겨 있습니다.</p><p>Marc Blank, Dave Lebling, Bruce Daniels, Tim Anderson의 Zork, 그리고 2025년 마이크로소프트가 공개한 MIT 라이선스 Zork I 소스에 기반한 작품입니다. 본 게임은 독립적인 어댑테이션입니다.</p><p>세계 지형, 생물, 인터페이스, 사운드는 본 게임을 위해 제작되었습니다. 포토그래메트리 표면 자산은 Poly Haven의 CC0 자료입니다.</p><a href="https://github.com/emollick/zork-underground-empire" target="_blank" rel="noreferrer">GitHub에서 본 어댑테이션 보기 ↗</a><a href="./licenses/ADAPTATION-MIT.txt" target="_blank" rel="noreferrer">어댑테이션 소스 라이선스 ↗</a><a href="https://github.com/historicalsource/zork1" target="_blank" rel="noreferrer">원본 Zork I 소스 ↗</a><a href="./licenses/ZORK-MIT.txt" target="_blank" rel="noreferrer">Zork 소스 라이선스 ↗</a><a href="https://polyhaven.com/license" target="_blank" rel="noreferrer">Poly Haven 자산 라이선스 ↗</a></div>`, '이 모험에 대하여');
   }
   death(room: RoomDef, message?: string) {
     if (message !== undefined) this.deathMessage = message;
-    this.open('death', `<span class="eyebrow">THE EMPIRE HAS CLAIMED ANOTHER</span><h2>You have died.</h2>${this.deathMessage ? `<p>${escapeHtml(this.deathMessage)}</p>` : ''}<p>Your discoveries and belongings are safe.</p><button class="primary-button" data-action="retry">Return to ${escapeHtml(room.name)} <span>→</span></button><button class="text-button" data-action="settings">Adjust the challenge</button>`);
+    this.open('death', `<span class="eyebrow">제국이 한 명을 더 거두었습니다</span><h2>당신은 죽었습니다.</h2>${this.deathMessage ? `<p>${escapeHtml(this.deathMessage)}</p>` : ''}<p>당신의 발견과 소지품은 안전하게 보존됩니다.</p><button class="primary-button" data-action="retry">${escapeHtml(room.name)}(으)로 돌아가기 <span>→</span></button><button class="text-button" data-action="settings">난이도 조절</button>`);
   }
   ending(state: GameState) {
-    this.open('ending', `<div class="ending-mark">${icon}</div><span class="eyebrow">MASTER OF THE GREAT UNDERGROUND EMPIRE</span><h2>Inside the<br>Barrow</h2><p>As you enter the barrow, the door closes inexorably behind you.</p><p class="ending-description">You have mastered ZORK: The Great Underground Empire.</p><div class="ending-stats"><div><strong>19</strong><span>TREASURES RETURNED</span></div><div><strong>${state.visited.length}</strong><span>PLACES DISCOVERED</span></div><div><strong>${Math.floor(state.playTime / 60)}</strong><span>MINUTES BELOW</span></div></div><button class="primary-button" data-action="resume">Keep exploring <span>→</span></button><button class="text-button" data-action="export">Keep a record of the expedition</button>`);
+    this.open('ending', `<div class="ending-mark">${icon}</div><span class="eyebrow">위대한 지하 제국의 정복자</span><h2>무덤의<br>내부</h2><p>무덤으로 들어서자, 문이 저항할 수 없이 뒤로 닫힙니다.</p><p class="ending-description">당신은 ZORK: 위대한 지하 제국을 정복했습니다.</p><div class="ending-stats"><div><strong>19</strong><span>돌아온 보물</span></div><div><strong>${state.visited.length}</strong><span>발견한 장소</span></div><div><strong>${Math.floor(state.playTime / 60)}</strong><span>밑에서 보낸 시간(분)</span></div></div><button class="primary-button" data-action="resume">탐험 계속하기 <span>→</span></button><button class="text-button" data-action="export">탐험 기록 보관하기</button>`);
   }
   toast(message: string, title = '', duration = 6) {
     const notice = this.overlay.querySelector<HTMLElement>('#panel-notice');
@@ -276,11 +276,11 @@ export class GameUI {
     const fighting = !document.querySelector('#enemy-hud')!.classList.contains('hidden');
     if (lookMode !== this.lastLookMode) {
       this.lastLookMode = lookMode; this.lookHintUntil = performance.now() + 7000;
-      this.text('look-hint', lookMode === 'free' ? 'Move the mouse to look · Keep it near an edge to turn further · Esc to pause' : 'Click to look around · Esc to pause');
+      this.text('look-hint', lookMode === 'free' ? '마우스를 움직여 둘러보기 · 가장자리에 가까이 두면 계속 돕니다 · Esc로 일시정지' : '클릭하여 둘러보기 · Esc로 일시정지');
     }
     document.querySelector('#look-hint')!.classList.toggle('hidden', this.touchMode || lookMode === 'touch' || lookMode === 'captured' || !active || fighting || lookMode === 'free' && performance.now() > this.lookHintUntil);
     const degrees = compassBearing(state.room, state.yaw);
-    const marks = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const marks = ['북', '북동', '동', '남동', '남', '남서', '서', '북서'];
     const track = document.querySelector('#compass-track')!;
     track.innerHTML = marks.map((label, i) => { let offset = i * 45 - degrees; if (offset > 180) offset -= 360; if (offset < -180) offset += 360; return Math.abs(offset) <= 80 ? `<span style="left:calc(50% + ${offset * 2}px);opacity:${1 - Math.abs(offset) / 95}">${label}</span>` : ''; }).join('');
     if (performance.now() > this.toastUntil) this.toastNode.classList.add('hidden');
@@ -290,6 +290,6 @@ export class GameUI {
   }
   saveIndicator() { const el = document.querySelector('#save-indicator')!; el.classList.add('show'); window.setTimeout(() => el.classList.remove('show'), 1800); }
   fade(dark: boolean) { document.querySelector('#transition')!.classList.toggle('dark', dark); }
-  error(message: string) { const el = document.querySelector('#fatal-error')!; el.classList.remove('hidden'); el.innerHTML = `<h2>The expedition could not start.</h2><p>${escapeHtml(message)}</p><button>Try again</button>`; el.querySelector('button')!.addEventListener('click', () => location.reload()); }
+  error(message: string) { const el = document.querySelector('#fatal-error')!; el.classList.remove('hidden'); el.innerHTML = `<h2>탐험을 시작할 수 없습니다.</h2><p>${escapeHtml(message)}</p><button>다시 시도</button>`; el.querySelector('button')!.addEventListener('click', () => location.reload()); }
   private text(id: string, value: string) { const el = document.getElementById(id); if (el && el.textContent !== value) el.textContent = value; }
 }
