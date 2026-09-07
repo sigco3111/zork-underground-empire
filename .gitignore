@@ -1,0 +1,28 @@
+# Dependencies and generated builds.
+# node_modules/ and dist/ are both git-ignored: dist/ is rebuilt in CI by the
+# GitHub Pages workflow (.github/workflows/pages.yml), so we do not commit it.
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local Windows packages and bundled runtimes
+runtime/
+release/
+releases/
+*.zip
+
+# Local review artifacts and hosting state
+qa/
+screenshots/
+.netlify/
+playwright-report/
+test-results/
+
+# Local configuration, credentials, and logs
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
