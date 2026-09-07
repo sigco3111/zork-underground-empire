@@ -2,6 +2,10 @@
 
 [![Zork 표지 일러스트: 빛나는 황동 랜턴과 어두운 숲의 하얀 집](/emollick/zork-underground-empire/raw/codex/public-release/public/social/zork-social.jpg)](/emollick/zork-underground-empire/blob/codex/public-release/public/social/zork-social.jpg)
 
+<p align="center">
+  <img width="900" alt="Zork 타이틀 화면 — 숲 속 하얀 집과 ZORK 타이포" src="docs/screenshot.png">
+</p>
+
 **Zork I**의 1인칭 3D 한글화 어댑테이션입니다. 하얀 집과 그 아래 세계를 탐험하고, 퍼즐을 풀며, 트롤과 도둑을 상대하고, 19개의 보물을 되찾아 오세요. 원작 Zork의 묘사가가 한글화된 자막과 함께 여정을 수놓습니다.
 
 **[브라우저에서 플레이하기](https://sigco3111.github.io/zork-underground-empire/)** — WebGL 2를 지원하는 컴퓨터, 휴대폰, 태블릿 어디서나.
