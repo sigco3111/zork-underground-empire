@@ -126,7 +126,7 @@ test('an actual exit-and-interaction route recovers every treasure and reaches t
   go(state, 'bat_cavern'); act(state, 'bat_roost', 'use:garlic'); act(state, 'jade');
   go(state, 'coal_mine'); act(state, 'gas_notice', 'use:lantern'); act(state, 'bracelet'); act(state, 'coal');
   const absentTorch = interact(state, 'lift_basket', 'lower');
-  assert.equal(absentTorch.success, false); assert.match(absentTorch.message, /borrow/i);
+  assert.equal(absentTorch.success, false); assert.match(absentTorch.message, /빌려|반납/);
   go(state, 'living_room'); act(state, 'trophy_case', 'borrow:torch');
   go(state, 'coal_mine'); act(state, 'lift_basket', 'lower');
   assert.ok(!state.inventory.includes('torch') && state.flags.basket_torch, 'cargo is physically removed until collected');
@@ -139,21 +139,21 @@ test('an actual exit-and-interaction route recovers every treasure and reaches t
   go(state, 'machine_room'); act(state, 'lowered_basket');
   assert.equal(interact(state, 'pressure_mill', 'use:screwdriver').success, false);
   act(state, 'pressure_mill', 'close');
-  assert.match(hints(state)[2], /open.*lid/i, 'closing the empty mill must produce a usable recovery hint');
+  assert.match(hints(state)[2], /열.*뚜껑|뚜껑.*열/, 'closing the empty mill must produce a usable recovery hint');
   act(state, 'pressure_mill', 'open');
-  assert.match(hints(state)[2], /load.*coal/i, 'an opened empty chamber advances to loading instead of repeating the lid instruction');
+  assert.match(hints(state)[2], /넣.*석탄|석탄.*넣/, 'an opened empty chamber advances to loading instead of repeating the lid instruction');
   act(state, 'pressure_mill', 'load'); act(state, 'pressure_mill', 'close');
   const switchChoice = interact(state, 'pressure_mill', 'turn');
   assert.equal(switchChoice.itemSelection, true, 'turning the switch still requires choosing a tool');
   assert.equal(state.flags.diamond_created, undefined);
   act(state, 'pressure_mill', 'use:screwdriver'); act(state, 'diamond');
-  assert.doesNotMatch(hints(state)[2], /close|START/i, 'the completed mill directs the player onward');
+  assert.doesNotMatch(hints(state)[2], /닫|START/i, 'the completed mill directs the player onward');
   assert.ok(state.inventory.includes('torch'), 'the freight torch remains recoverable');
   go(state, 'coal_mine');
   const emptyBasket = interact(state, 'lift_basket');
   assert.equal(emptyBasket.success, true);
-  assert.match(emptyBasket.message, /empty|collected/i, 'returning to the shaft acknowledges that the cargo has already been collected');
-  assert.doesNotMatch(emptyBasket.message, /retrieve.*cargo/i, 'an empty basket must not start another retrieval loop');
+  assert.match(emptyBasket.message, /비어|거두/, 'returning to the shaft acknowledges that the cargo has already been collected');
+  assert.doesNotMatch(emptyBasket.message, /회수.*화물/i, 'an empty basket must not start another retrieval loop');
   go(state, 'dam_base'); act(state, 'folded_boat', 'use:pump');
   go(state, 'river'); act(state, 'river_buoy');
   assert.equal(interact(state, 'river_landing', 'current').success, false);
@@ -179,12 +179,12 @@ test('an actual exit-and-interaction route recovers every treasure and reaches t
   assert.equal(allTreasuresDeposited(state), true);
   assert.equal(state.completed, false, 'depositing is not the final ending trigger');
   go(state, 'cellar'); state.lantern = false;
-  assert.match(objective(state).text, /pitch black/i, 'the completed collection must not hide an immediate darkness hazard');
-  assert.match(hints(state)[2], /lantern|press L/i, 'requested help must restore light before directing the player to the ending');
+  assert.match(objective(state).text, /칠흑/i, 'the completed collection must not hide an immediate darkness hazard');
+  assert.match(hints(state)[2], /등불|랜턴|L.*눌러/i, 'requested help must restore light before directing the player to the ending');
   state.lantern = true; go(state, 'living_room');
   act(state, 'ancient_map');
   act(state, 'trophy_case', 'borrow:egg'); go(state, 'barrow');
-  assert.match(hints(state)[2], /deposit|return.*case/i, 'a player carrying a borrowed treasure needs a usable next step at the barrow');
+  assert.match(hints(state)[2], /돌려.*상자|상자.*돌려|반납|보관/, 'a player carrying a borrowed treasure needs a usable next step at the barrow');
   assert.equal(interact(state, 'barrow_threshold').success, false, 'the borrowed egg must return to the display before the first ending');
   go(state, 'living_room'); act(state, 'trophy_case', 'deposit');
   go(state, 'barrow'); const ending = interact(state, 'barrow_threshold');
@@ -196,7 +196,7 @@ test('an actual exit-and-interaction route recovers every treasure and reaches t
   const afterBorrow = deserialize(serialize(state)); assert.ok(afterBorrow);
   assert.equal(afterBorrow.completed, true, 'continuing to explore with a borrowed treasure must not revoke the earned ending');
   assert.equal(afterBorrow.inventory.includes('torch'), true);
-  assert.equal(objective(afterBorrow).title, 'Master Adventurer');
+  assert.equal(objective(afterBorrow).title, '위대한 모험가');
 });
 
 test('the food-and-water cyclops route also opens the treasury without consuming failed offerings', () => {
@@ -216,17 +216,17 @@ test('the explorer’s allusion preserves the name puzzle until the explicit sol
   act(state, 'skeleton_key'); act(state, 'maze_grate', 'use:skeleton_key');
   const note = interact(state, 'cyclops_legend');
   assert.equal(note.success, true);
-  assert.match(note.message, /Nobody.*Ithaca/i, 'the written clue must offer a recognizable literary connection');
-  assert.doesNotMatch(note.message, /Odysseus|Ulysses/i, 'reading the clue should not supply the literal answer');
-  assert.doesNotMatch(state.journal.find(entry => entry.id === 'cyclops_legend')!.text, /Odysseus|Ulysses/i);
-  assert.doesNotMatch(hints(state).slice(0, 2).join(' '), /Odysseus|Ulysses/i);
-  assert.match(hints(state)[2], /Odysseus|Ulysses/i, 'the requested solution remains available to players unfamiliar with the Odyssey');
+  assert.match(note.message, /아무개.*이타카|이타카.*아무개/, 'the written clue must offer a recognizable literary connection');
+  assert.doesNotMatch(note.message, /오디세우스|율리시스/, 'reading the clue should not supply the literal answer');
+  assert.doesNotMatch(state.journal.find(entry => entry.id === 'cyclops_legend')!.text, /오디세우스|율리시스/);
+  assert.doesNotMatch(hints(state).slice(0, 2).join(' '), /오디세우스|율리시스/);
+  assert.match(hints(state)[2], /오디세우스|율리시스/, 'the requested solution remains available to players unfamiliar with the Odyssey');
   go(state, 'cyclops');
   const conversation = interact(state, 'cyclops');
   assert.equal(conversation.prompt?.action, 'say');
-  assert.ok(conversation.choices?.every(choice => !/Odysseus|Ulysses/i.test(choice.label)), 'ordinary conversation must not contain an answer button');
-  assert.doesNotMatch(hints(state).slice(0, 2).join(' '), /Odysseus|Ulysses/i);
-  assert.match(hints(state)[2], /Odysseus|Ulysses/i);
+  assert.ok(conversation.choices?.every(choice => !/오디세우스|율리시스/.test(choice.label)), 'ordinary conversation must not contain an answer button');
+  assert.doesNotMatch(hints(state).slice(0, 2).join(' '), /오디세우스|율리시스/);
+  assert.match(hints(state)[2], /오디세우스|율리시스/);
   act(state, 'cyclops', 'say:Odysseus');
   assert.equal(state.flags.cyclops_fled, true);
   go(state, 'treasure_room');
@@ -240,7 +240,7 @@ test('early display of the egg and canary preserves both later puzzle uses', () 
   go(state, 'cyclops'); act(state, 'cyclops', 'say:Odysseus');
   go(state, 'treasure_room'); assert.equal(defeatEnemy(state, 'thief').success, true); act(state, 'fine_picks');
   const absentEgg = interact(state, 'locksmith_table', 'use:fine_picks');
-  assert.equal(absentEgg.success, false); assert.match(absentEgg.message, /borrow/i);
+  assert.equal(absentEgg.success, false); assert.match(absentEgg.message, /빌려|반납/);
   assert.equal(state.flags.egg_open, undefined);
   go(state, 'living_room'); act(state, 'trophy_case', 'borrow:egg');
   go(state, 'treasure_room'); act(state, 'locksmith_table', 'use:fine_picks');
@@ -280,7 +280,7 @@ test('every stage offers an ordered three-level hint, and local mechanisms have 
     const sample = { ...state, room: room.id };
     const entries = hints(sample);
     assert.equal(entries.length, 3, room.id);
-    assert.ok(entries.every(value => value.length > 15 && !/TODO|demo|placeholder/i.test(value)));
+    assert.ok(entries.every(value => value.length > 8 && !/TODO|demo|placeholder/i.test(value)));
     assert.ok(objective(sample).title && objective(sample).text);
   }
   for (const roomId of ['maze', 'cyclops', 'treasure_room', 'dome', 'temple', 'hades', 'loud_room', 'dam', 'maintenance', 'bat_cavern', 'coal_mine', 'machine_room', 'river', 'sandy_cave', 'falls']) {
@@ -292,17 +292,17 @@ test('guidance advances after entry and a solved dam instead of sending the play
   const entering = createGame();
   go(entering, 'behind_house'); act(entering, 'kitchen_window'); act(entering, 'kitchen_window');
   assert.equal(entering.room, 'kitchen');
-  assert.match(objective(entering).text, /passage.*west.*staircase/i, 'inside guidance describes the visible ways onward');
-  assert.ok(hints(entering).every(value => !/behind the house|open the window/i.test(value)), 'entry guidance should recognize that the player is already inside');
+  assert.match(objective(entering).text, /서쪽.*통하는.*계단|서쪽.*복도.*계단/, 'inside guidance describes the visible ways onward');
+  assert.ok(hints(entering).every(value => !/집.*뒤|창문.*열/i.test(value)), 'entry guidance should recognize that the player is already inside');
   go(entering, 'living_room');
-  assert.match(hints(entering)[2], /lantern/i);
+  assert.match(hints(entering)[2], /등불|랜턴/i);
 
   const drained = begin();
   go(drained, 'maintenance'); act(drained, 'wrench'); act(drained, 'control_buttons', 'yellow');
   go(drained, 'dam'); act(drained, 'dam_bolt', 'use:wrench');
   assert.equal(drained.flags.reservoir_drained, true);
-  assert.match(hints(drained)[2], /reservoir/i);
-  assert.ok(hints(drained).every(value => !/press yellow|turn the bolt|enable.*controls/i.test(value)), 'the next nudge should lead to the reward, not repeat the completed solution');
+  assert.match(hints(drained)[2], /저수지/);
+  assert.ok(hints(drained).every(value => !/노란.*누르|볼트.*돌리|활성.*제어/i.test(value)), 'the next nudge should lead to the reward, not repeat the completed solution');
 });
 
 test('rest restores health and stores a safe return without deleting expedition progress', () => {
@@ -315,44 +315,44 @@ test('rest restores health and stores a safe return without deleting expedition 
 
 test('early observations preserve discovery and exact puzzle answers require the third hint', () => {
   const first = createGame();
-  assert.doesNotMatch([objective(first).text, ...hints(first).slice(0, 2)].join(' '), /window|lantern|sword|trap.?door|barrow|canary/i);
+  assert.doesNotMatch([objective(first).text, ...hints(first).slice(0, 2)].join(' '), /창문|등불|랜턴|칼|트랩.?도어|언덕|카나리아/);
   act(first, 'mailbox');
-  assert.doesNotMatch(hints(first).slice(0, 2).join(' '), /kitchen window|climb inside|lantern/i);
-  assert.match(hints(first)[2], /small window/i, 'the explicitly requested solution must still make the opening usable');
+  assert.doesNotMatch(hints(first).slice(0, 2).join(' '), /주방.*창문|안으로.*기어|등불|랜턴/);
+  assert.match(hints(first)[2], /작은 창문/, 'the explicitly requested solution must still make the opening usable');
   go(first, 'forest');
-  assert.doesNotMatch([objective(first).text, ...hints(first)].join(' '), /canary|thief|worktable/i, 'an undiscovered egg must not advertise its hidden contents or a distant locksmith');
+  assert.doesNotMatch([objective(first).text, ...hints(first)].join(' '), /카나리아|도적|작업대/, 'an undiscovered egg must not advertise its hidden contents or a distant locksmith');
   act(first, 'egg');
-  assert.doesNotMatch([objective(first).text, ...hints(first).slice(0, 2)].join(' '), /canary|thief|worktable/i);
-  assert.match(hints(first)[2], /worktable/i);
-  assert.doesNotMatch(hints(first).join(' '), /canary/i, 'help opening the egg need not reveal what is inside');
+  assert.doesNotMatch([objective(first).text, ...hints(first).slice(0, 2)].join(' '), /카나리아|도적|작업대/);
+  assert.match(hints(first)[2], /작업대/);
+  assert.doesNotMatch(hints(first).join(' '), /카나리아/, 'help opening the egg need not reveal what is inside');
 
   const underground = begin();
   go(underground, 'dome');
-  assert.doesNotMatch([objective(underground).text, ...hints(underground).slice(0, 2)].join(' '), /attic|bring.*rope|use.*rope/i);
-  assert.match(hints(underground)[2], /rope.*attic/i);
+  assert.doesNotMatch([objective(underground).text, ...hints(underground).slice(0, 2)].join(' '), /다락방|밧줄.*가져|밧줄.*사용/);
+  assert.match(hints(underground)[2], /밧줄.*다락방|다락방.*밧줄/);
   go(underground, 'dam');
-  assert.doesNotMatch([objective(underground).text, ...hints(underground).slice(0, 2)].join(' '), /yellow|wrench/i);
-  assert.match(hints(underground)[2], /yellow.*wrench/i);
+  assert.doesNotMatch([objective(underground).text, ...hints(underground).slice(0, 2)].join(' '), /노란|렌치/);
+  assert.match(hints(underground)[2], /노란.*렌치|렌치.*노란/);
   go(underground, 'loud_room');
-  assert.doesNotMatch([objective(underground).text, ...hints(underground).slice(0, 2)].join(' '), /\becho\b/i);
-  assert.match(hints(underground)[2], /type.*Echo/i);
+  assert.doesNotMatch([objective(underground).text, ...hints(underground).slice(0, 2)].join(' '), /\b메아리\b/);
+  assert.match(hints(underground)[2], /입력.*Echo|Echo.*입력/);
   act(underground, 'echo_stone', 'say:Echo');
-  assert.match(hints(underground)[2], /take.*platinum/i);
-  assert.doesNotMatch(hints(underground)[2], /type|call/i, 'a solved word puzzle must advance to its visible reward');
+  assert.match(hints(underground)[2], /집.*백금|백금.*집/);
+  assert.doesNotMatch(hints(underground)[2], /입력|호출/i, 'a solved word puzzle must advance to its visible reward');
 });
 
 test('darkness guidance recognizes an earned torch even when the lantern is switched off', () => {
   const state = begin();
   go(state, 'dome'); act(state, 'dome_railing', 'use:rope'); act(state, 'torch');
   go(state, 'cellar'); state.lantern = false;
-  assert.doesNotMatch([objective(state).text, ...hints(state)].join(' '), /pitch black|eaten by a grue|turn on.*lantern/i);
+  assert.doesNotMatch([objective(state).text, ...hints(state)].join(' '), /칠흑|그루.*잡아먹|등불.*켜/i);
   go(state, 'living_room'); act(state, 'trophy_case', 'deposit');
   go(state, 'cellar');
-  assert.match(objective(state).text, /pitch black.*eaten by a grue/i);
-  assert.match(hints(state)[2], /Press L/i, 'a carried but unlit lantern remains a valid way out of danger');
+  assert.match(objective(state).text, /칠흑.*그루/);
+  assert.match(hints(state)[2], /L.*눌러/i, 'a carried but unlit lantern remains a valid way out of danger');
   go(state, 'living_room'); act(state, 'trophy_case', 'borrow:torch');
   go(state, 'cellar');
-  assert.doesNotMatch([objective(state).text, ...hints(state)].join(' '), /pitch black|eaten by a grue/i);
+  assert.doesNotMatch([objective(state).text, ...hints(state)].join(' '), /칠흑|그루/);
 });
 
 test('retry after a loaded death restarts the unfinished fight at the chosen challenge and keeps earned progress', () => {

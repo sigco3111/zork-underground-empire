@@ -120,13 +120,13 @@ test('spoken solutions are supplied by the player and wrong words do not advance
 
 test('normal observations do not reveal remote tools or future solutions', () => {
   const state = createGame();
-  const leaflet = interact(state, 'mailbox'); assert.match(leaflet.message, /adventure, danger, and low cunning/);
-  assert.doesNotMatch(leaflet.message, /window|nineteen|last road/i);
+  const leaflet = interact(state, 'mailbox'); assert.match(leaflet.message, /모험.*위험.*잔머리/);
+  assert.doesNotMatch(leaflet.message, /창문|열아홉|마지막.*길/i);
   for (const [room, object, spoilers] of [
-    ['forest', 'songbird_perch', /canary|egg|thief/i],
-    ['dome', 'dome_railing', /attic/i],
-    ['dam_base', 'folded_boat', /reservoir|pump/i],
-    ['falls', 'rainbow_ledge', /sceptre|coffin|egypt/i],
+    ['forest', 'songbird_perch', /카나리아|달걀|도적/],
+    ['dome', 'dome_railing', /다락방/],
+    ['dam_base', 'folded_boat', /저수지|펌프/],
+    ['falls', 'rainbow_ledge', /왕홀|관|이집트/],
   ] as const) {
     state.room = room; const result = interact(state, object);
     assert.notEqual(result.message, 'There is nothing here by that name.');
@@ -134,7 +134,7 @@ test('normal observations do not reveal remote tools or future solutions', () =>
   }
   state.room = 'maintenance';
   const controls = interact(state, 'control_buttons'); assert.equal(controls.choices?.length, 4);
-  for (const choice of controls.choices ?? []) assert.doesNotMatch(choice.label, /enable|isolate|pressure|lamp/i);
+  for (const choice of controls.choices ?? []) assert.doesNotMatch(choice.label, /활성|차단|압력|등불|랜턴/);
 });
 
 test('a new puzzle starts with its own hint tier even when the HUD observation stays the same', () => {

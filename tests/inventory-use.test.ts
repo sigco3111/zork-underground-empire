@@ -184,7 +184,7 @@ test('a displayed utility treasure stays unavailable until explicitly borrowed, 
 test('the shaft basket waits for an explicit atomic lowering choice and preserves its cargo through transit saves', () => {
   let state = scene({ room: 'coal_mine', object: 'lift_basket', tool: 'coal', flag: 'basket_lowered' }, ['lantern', 'sword', 'coal', 'screwdriver', 'torch']);
   const before = structuredClone(state), result = interact(state, 'lift_basket');
-  assert.deepEqual(result.choices, [{ label: 'Lower the supplies', action: 'lower' }]);
+  assert.deepEqual(result.choices, [{ label: '물품을 내린다', action: 'lower' }]);
   assert.deepEqual(state, before, 'inspecting the basket cannot remove three carried items');
   assert.equal(interact(state, 'lift_basket', 'use:torch').success, false);
   assert.deepEqual(state, before, 'a partial or wrong action cannot strand one item in a new cargo state');
