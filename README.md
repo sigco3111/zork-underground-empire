@@ -1,6 +1,6 @@
 # 조크 · 위대한 지하 제국 (Zork: The Great Underground Empire)
 
-[![Zork 표지 일러스트: 빛나는 황동 랜턴과 어두운 숲의 하얀 집](/emollick/zork-underground-empire/raw/codex/public-release/public/social/zork-social.jpg)](/emollick/zork-underground-empire/blob/codex/public-release/public/social/zork-social.jpg)
+[![Zork 표지 일러스트: 빛나는 황동 랜턴과 어두운 숲의 하얀 집](https://raw.githubusercontent.com/emollick/zork-underground-empire/codex/public-release/public/social/zork-social.jpg)](https://github.com/emollick/zork-underground-empire/blob/codex/public-release/public/social/zork-social.jpg)
 
 <p align="center">
   <img width="900" alt="Zork 타이틀 화면 — 숲 속 하얀 집과 ZORK 타이포" src="docs/screenshot.png">
